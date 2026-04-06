@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmbuTrack - AI Ambulance Routing</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS & LRM -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <button class="emergency-btn" onclick="triggerEmergency()">Emergency</button>
+
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar glass-panel">
+            <div class="brand">
+                <i data-lucide="activity" class="brand-icon"></i>
+                <h1>AmbuTrack</h1>
+            </div>
+            <ul class="nav-links">
+                <li id="nav-dashboard" class="active"><i data-lucide="map"></i> Dashboard</li>
+                <li id="nav-incidents"><i data-lucide="bell"></i> Incidents <span class="badge pulse"
+                        id="incidentsBadge">3</span></li>
+                <li id="nav-units"><i data-lucide="users"></i> Units</li>
+                <li id="nav-settings"><i data-lucide="settings"></i> Settings</li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header glass-panel">
+                <div class="search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="searchInput" placeholder="Search incidents, hospitals, units...">
+                </div>
+                <div class="user-profile">
+                    <div class="status-indicator"></div>
+                    <span>Dispatcher Nayana</span>
+                </div>
+            </header>
+
+            <!-- Dashboard Grid -->
+            <div id="dashboard-view" class="dashboard-grid view-section">
+
+                <!-- Active Incidents Feed -->
+                <section class="incidents-panel glass-panel">
+                    <div class="panel-header">
+                        <h2>Active Incidents</h2>
+                        <button class="icon-button" aria-label="Filter"
+                            style="background: none; border: none; color: white; cursor: pointer;">
+                            <i data-lucide="filter"></i>
+                        </button>
+                    </div>
+                    <div class="incident-list" id="incidentList">
+                        <!-- Simulated items injected by JS -->
+                    </div>
+                </section>
+
+                <!-- Map Simulator -->
+                <section class="map-panel glass-panel">
+                    <div id="map"></div>
+                    <div class="map-overlay-stats">
+                        <div class="stat-box">
+                            <span class="label">Avg Response Time</span>
+                            <span class="value success">4m 12s</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="label">Traffic Level</span>
+                            <span class="value warning">Moderate</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Assistant Sidebar -->
+                <section class="ai-sidebar glass-panel">
+                    <div class="panel-header">
+                        <h2>AI Routing Analyst</h2>
+                        <i data-lucide="cpu" class="neon-icon"></i>
+                    </div>
+
+                    <div class="ai-insight-card critical" id="latest-insight-card">
+                        <div class="card-header">
+                            <i data-lucide="alert-triangle"></i>
+                            <h3>Critical Dispatch</h3>
+                        </div>
+                        <p class="description" style="font-size: 14px;" id="insight-incident-desc">Incident #--- -
+                            Waiting for GPS</p>
+                        <hr>
+                        <div class="recommendations">
+                            <div class="rec-item">
+                                <span class="rec-label">Assigned Unit:</span>
+                                <span class="rec-value" id="insight-unit">Ambulance Alpha-7</span>
+                            </div>
+                            <div class="rec-item">
+                                <span class="rec-label">Target Hospital:</span>
+                                <span class="rec-value" id="assignedHospitalName">Awaiting Routing...</span>
+                            </div>
+                            <div class="rec-item">
+                                <span class="rec-label">Insight:</span>
+                                <span class="rec-text ai-text">Routing based on lowest ETA and realtime ICU availability
+                                    capacity.</span>
+                            </div>
+                        </div>
+                        <button id="btnMonitorRoute" class="btn-primary glow-effect">Monitor Route</button>
+                    </div>
+
+                    <div class="hospital-capacity">
+                        <h3>Nearby Hospital Capacity</h3>
+                        <div id="hospital-capacities-list">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Units Table (Hidden by default) -->
+            <div id="units-view" class="hidden view-section" style="flex:1;">
+                <section class="units-panel glass-panel"
+                    style="border-radius:16px; padding:24px; height: 100%; display: flex; flex-direction:column;">
+                    <div class="panel-header">
+                        <h2>Fleet Overview</h2>
+                    </div>
+                    <div style="flex:1; overflow-y:auto;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+                                    <th style="padding: 12px;">Unit ID</th>
+                                    <th style="padding: 12px;">Driver / EMT</th>
+                                    <th style="padding: 12px;">Status</th>
+                                    <th style="padding: 12px;">Speed</th>
+                                    <th style="padding: 12px;">Current Assignment</th>
+                                </tr>
+                            </thead>
+                            <tbody id="units-table-body">
+                                <!-- JS injected -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Incidents Full Log (Hidden by default) -->
+            <div id="incidents-view" class="hidden view-section" style="flex:1;">
+                <section class="units-panel glass-panel"
+                    style="border-radius:16px; padding:24px; height: 100%; display: flex; flex-direction:column;">
+                    <div class="panel-header">
+                        <h2>All Emergency Logs</h2>
+                    </div>
+                    <div style="flex:1; overflow-y:auto;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+                                    <th style="padding: 12px;">Incident ID</th>
+                                    <th style="padding: 12px;">Severity</th>
+                                    <th style="padding: 12px;">Type</th>
+                                    <th style="padding: 12px;">Reported Time</th>
+                                    <th style="padding: 12px;">Address</th>
+                                </tr>
+                            </thead>
+                            <tbody id="incidents-table-body">
+                                <!-- JS injected -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Settings View (Hidden by default) -->
+            <div id="settings-view" class="hidden view-section" style="flex:1;">
+                <section class="glass-panel" style="border-radius:16px; padding:24px; height: 100%;">
+                    <div class="panel-header">
+                        <h2>System Settings</h2>
+                    </div>
+                    <div style="max-width: 600px; margin-top: 20px;">
+                        <div
+                            style="margin-bottom:30px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+                            <h3
+                                style="margin-bottom:10px; color:var(--primary-teal); display:flex; align-items:center; gap:8px;">
+                                <i data-lucide="gauge"></i> Simulator Tuning</h3>
+                            <p style="color:var(--text-secondary); margin-bottom:16px; font-size:14px;">Adjust the
+                                physical speed multiplier of the ambulance markers on the GPS map.</p>
+                            <input type="range" id="simSpeedSlider" min="1" max="10" value="5" style="width:100%;">
+                        </div>
+                        <div
+                            style="margin-bottom:30px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+                            <h3
+                                style="margin-bottom:10px; color:var(--primary-teal); display:flex; align-items:center; gap:8px;">
+                                <i data-lucide="moon"></i> UI Theme Contrast</h3>
+                            <button id="btnToggleContrast" class="btn-primary" style="width: auto;">Toggle High Contrast
+                                Dark Mode</button>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+                            <h3
+                                style="margin-bottom:10px; color:var(--primary-teal); display:flex; align-items:center; gap:8px;">
+                                <i data-lucide="server"></i> Satellite Uplink Integrity</h3>
+                            <div
+                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="color:var(--text-secondary); font-size:14px;">API Connection
+                                    Strength</span>
+                                <span style="color:var(--accent-green); font-weight:600;">99.9%</span>
+                            </div>
+                            <div class="progress-bar" style="height: 10px; background: rgba(255,255,255,0.05);">
+                                <div class="fill success" style="width: 100%;"></div>
+                            </div>
+                            <p style="margin-top: 10px; color:var(--text-secondary); font-size:12px;">Actively receiving
+                                spatial telemetry from Overpass servers. Network latency: 14ms (Optimum).</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- AI Chatbot Widget -->
+    <div id="ai-chat-widget" class="hidden glass-panel" style="position: fixed; bottom: 80px; right: 20px; width: 350px; height: 450px; z-index: 1000; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--accent-red);">
+        <div style="background: rgba(239, 68, 68, 0.2); padding: 16px; border-bottom: 1px solid var(--accent-red); display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 16px; color: white; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="bot"></i> Emergency AI Agent
+            </h3>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button id="chat-speak-toggle" style="background:none; border:none; color: white; cursor:pointer;" title="Toggle AI Voice"><i data-lucide="volume-2" id="speak-icon"></i></button>
+                <button onclick="document.getElementById('ai-chat-widget').classList.add('hidden')" style="background:none; border:none; color:white; cursor:pointer;"><i data-lucide="x"></i></button>
+            </div>
+        </div>
+        <div id="chat-messages" style="flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+            <!-- Messages injected here -->
+        </div>
+        <div style="padding: 12px; border-top: 1px solid var(--border-color); display: flex; gap: 8px; background: rgba(0,0,0,0.4); align-items: center;">
+            <button id="chat-mic" class="btn-primary" style="padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); cursor: pointer; color: white;" title="Hold to speak"><i data-lucide="mic" style="width:16px;height:16px;"></i></button>
+            <input type="text" id="chat-input" placeholder="Type medical emergency..." style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: white; outline: none;">
+            <button id="chat-send" class="btn-primary" style="padding: 10px 16px; border-radius: 8px; background: var(--accent-red); border: none; cursor: pointer; color: white;"><i data-lucide="send" style="width:16px;height:16px;"></i></button>
+        </div>
+    </div>
+
+    <!-- Hospital Selection Widget (User Mode) -->
+    <div id="hospital-selection-widget" class="hidden glass-panel" style="position: fixed; top: 90px; left: 20px; width: 350px; z-index: 1000; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--primary-teal);">
+        <div style="background: rgba(20, 184, 166, 0.2); padding: 16px; border-bottom: 1px solid var(--primary-teal);">
+            <h3 style="margin: 0; font-size: 16px; color: white; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="navigation"></i> Choose Nearest Hospital
+            </h3>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Click a facility to generate physical driving routes.</p>
+        </div>
+        <div id="hospital-options-list" style="padding: 16px; display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto;">
+            <!-- Options dynamically injected -->
+        </div>
+    </div>
+
+    <!-- Exit User Mode Button -->
+    <button id="btn-exit-user-mode" class="hidden glass-panel" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--accent-red); padding: 12px 24px; border-radius: 50px; font-size: 16px; font-weight: bold; z-index: 2000; cursor: pointer; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); border: 2px solid white;">
+        <i data-lucide="x-circle"></i> Exit User Mode
+    </button>
+
+    <!-- Leaflet JS & LRM -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

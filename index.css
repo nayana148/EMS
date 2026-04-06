@@ -1,0 +1,654 @@
+:root {
+    --bg-dark: #0f172a;
+    --bg-panel: rgba(30, 41, 59, 0.7);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+
+    --primary-teal: #14b8a6;
+    --primary-glow: rgba(20, 184, 166, 0.3);
+
+    --accent-red: #ef4444;
+    --accent-red-glow: rgba(239, 68, 68, 0.3);
+
+    --accent-amber: #f59e0b;
+    --accent-green: #10b981;
+}
+
+body.high-contrast {
+    --bg-dark: #000000;
+    --bg-panel: rgba(0, 0, 0, 0.95);
+    --border-color: rgba(255, 255, 255, 0.25);
+    --text-primary: #ffffff;
+    --text-secondary: #e5e7eb;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+    background: var(--bg-panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.app-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-color);
+    z-index: 10;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 48px;
+    color: var(--primary-teal);
+}
+
+.brand-icon {
+    width: 32px;
+    height: 32px;
+    filter: drop-shadow(0 0 8px var(--primary-glow));
+}
+
+.brand h1 {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nav-links li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-links li:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+.nav-links li.active {
+    background: var(--primary-teal);
+    color: #fff;
+    box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.badge {
+    background: var(--accent-red);
+    color: white;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-left: auto;
+    font-weight: 600;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 24px;
+    height: 100vh;
+}
+
+.header {
+    height: 70px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px 16px;
+    border-radius: 12px;
+    width: 400px;
+}
+
+.search-bar input {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 100%;
+    outline: none;
+    font-size: 14px;
+}
+
+.search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 8px var(--accent-green);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr 350px;
+    gap: 24px;
+    flex: 1;
+    min-height: 0;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.panel-header h2 {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* Incidents Panel */
+.incidents-panel {
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.incident-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-right: 8px;
+}
+
+.incident-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.incident-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.incident-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: pointer;
+}
+
+.incident-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-teal);
+}
+
+.incident-card.critical {
+    border-left: 4px solid var(--accent-red);
+}
+
+.incident-card.high {
+    border-left: 4px solid var(--accent-amber);
+}
+
+.incident-tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.incident-tag.red {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--accent-red);
+}
+
+.incident-tag.orange {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--accent-amber);
+}
+
+.incident-title {
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.incident-loc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Map Panel */
+.map-panel {
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    background: #1a2036;
+    /* Fallback */
+    z-index: 1;
+    /* For Leaflet */
+}
+
+/* Leaflet Dark Mode Tweaks */
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+.map-overlay-stats {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 999;
+    display: flex;
+    gap: 16px;
+}
+
+.stat-box {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
+    padding: 12px 16px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-box .label {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.stat-box .value {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.value.success {
+    color: var(--accent-green);
+}
+
+.value.warning {
+    color: var(--accent-amber);
+}
+
+/* AI Sidebar */
+.ai-sidebar {
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+}
+
+.neon-icon {
+    color: var(--primary-teal);
+    filter: drop-shadow(0 0 5px var(--primary-glow));
+}
+
+.ai-insight-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-insight-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent-red);
+    box-shadow: 0 0 10px var(--accent-red);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent-red);
+    margin-bottom: 8px;
+}
+
+.ai-insight-card hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 16px 0;
+}
+
+.recommendations {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.rec-item {
+    font-size: 14px;
+}
+
+.rec-label {
+    color: var(--text-secondary);
+    display: block;
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.rec-value {
+    font-weight: 500;
+}
+
+.ai-text {
+    color: var(--primary-teal);
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.btn-primary {
+    background: var(--primary-teal);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.btn-primary:hover {
+    background: #0d9488;
+    transform: translateY(-2px);
+}
+
+.glow-effect {
+    box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.hospital-capacity h3 {
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+.hospital-item {
+    margin-bottom: 16px;
+}
+
+.hospital-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar .fill {
+    height: 100%;
+    background: var(--primary-teal);
+    border-radius: 4px;
+    transition: width 1s ease-in-out;
+}
+
+.progress-bar .fill.danger {
+    background: var(--accent-red);
+}
+
+.progress-bar .fill.success {
+    background: var(--accent-green);
+}
+
+.text-danger {
+    color: var(--accent-red);
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 var(--accent-red-glow);
+    }
+
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Custom map marker styles */
+.pulse-marker {
+    background: var(--accent-red);
+    border: 2px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 rgba(239, 68, 68, 0.4);
+    animation: marker-pulse 2s infinite;
+}
+
+@keyframes marker-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+.hospital-marker {
+    background: white;
+    border: 2px solid var(--primary-teal);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-teal);
+    font-weight: bold;
+    font-size: 12px;
+}
+
+
+.emergency-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #ff3b3b;
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255, 59, 59, 0.7);
+    z-index: 1000;
+    transition: 0.3s;
+}
+
+.emergency-btn:hover {
+    background: #ff0000;
+    transform: scale(1.1);
+}
+
+.ambulance-marker {
+    background: var(--accent-amber);
+    border: 2px solid white;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.user-marker {
+    background: #3b82f6;
+    border: 2px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-marker::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: rgba(59, 130, 246, 0.4);
+    border-radius: 50%;
+    animation: marker-pulse 2s infinite;
+}
+
+.hidden {
+    display: none !important;
+}
+
+table tr {
+    transition: background 0.2s;
+}
+
+table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* AI Chat Styles */
+.chat-msg {
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 85%;
+    font-size: 14px;
+    line-height: 1.4;
+}
+.chat-msg.bot {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+.chat-msg.user {
+    background: var(--primary-teal);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+.ai-suggestion {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--accent-red);
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 8px;
+    color: #ffcccc;
+}
+
+/* Hide Leaflet Routing Text Container */
+.leaflet-routing-container {
+    display: none !important;
+}
+
+/* Hospital Select Card */
+.hosp-select-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hosp-select-card:hover {
+    background: rgba(20, 184, 166, 0.1);
+    border-color: var(--primary-teal);
+    transform: translateY(-2px);
+}
